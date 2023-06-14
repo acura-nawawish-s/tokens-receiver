@@ -21,7 +21,7 @@ class LazadaApiClient {
     authUrl.searchParams.set("client_id", this._appKey);
     authUrl.searchParams.set(
       "redirect_uri",
-      new URL(`https://${hostname}/callback/lazada`).toString()
+      new URL(`https://${hostname}/oauth/callback/lazada`).toString()
     );
 
     return authUrl.toString();

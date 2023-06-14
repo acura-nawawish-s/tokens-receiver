@@ -25,10 +25,7 @@ oauthRouter.get("/url/:platform", (req, res) => {
 
   switch (platform) {
     case "lazada":
-      authUrl = lazadaClient.getAuthUrl(
-        process.env.LAZADA_APP_KEY,
-        process.env.HOSTNAME
-      );
+      authUrl = lazadaClient.getAuthUrl(process.env.HOSTNAME);
       break;
 
     default:
