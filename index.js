@@ -94,7 +94,7 @@ oauthRouter.get("/callback/:platform", async (req, res) => {
     }
 
     case "shopee": {
-      const { code, shop_id } = req.query;
+      const { code, shop_id, main_account_id } = req.query;
 
       if (!code) {
         msg = "'code' query parameter is required";
@@ -106,8 +106,13 @@ oauthRouter.get("/callback/:platform", async (req, res) => {
         });
       }
 
-      if (!shop_id) {
-        msg = "'shop_id' query parameter is required";
+      console.log("code: ", code);
+      console.log("shop_id: ", shop_id);
+      console.log("main_account_id: ", main_account_id);
+
+      if (!shop_id && !main_account_id) {
+        msg =
+          "Either 'shop_id' or 'main_account_id' query paramter is required";
 
         return res.status(400).json({
           success: false,
@@ -116,13 +121,33 @@ oauthRouter.get("/callback/:platform", async (req, res) => {
         });
       }
 
-      console.log("code: ", code);
-      console.log("shop_id: ", shop_id);
+      let accountType = "";
+      let sellerId = "";
+
+      if (shop_id) {
+        accountType = "shop_id";
+        sellerId = shop_id;
+      } else if (main_account_id) {
+        accountType = "main_account_id";
+        sellerId = main_account_id;
+      } else {
+        msg = "Could not determine account type of the seller";
+
+        return res.status(400).json({
+          success: false,
+          msg,
+          error: msg,
+        });
+      }
 
       try {
         console.log("Exchanging code for tokens...");
 
-        response = await shopeeClient.exchangeCodeForTokens(code, shop_id);
+        response = await shopeeClient.exchangeCodeForTokens(
+          code,
+          sellerId,
+          accountType
+        );
       } catch (e) {
         msg = "Failed to get Shopee tokens: " + e.message;
 

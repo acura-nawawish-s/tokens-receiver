@@ -29,7 +29,7 @@ class ShopeeApiClient {
     return authUrl.toString();
   }
 
-  exchangeCodeForTokens(code, shopId) {
+  exchangeCodeForTokens(code, sellerId, type) {
     const url = new URL(`${this.getBaseUrl()}/api/v2/auth/token/get`);
     const timestamp = this.getCurrentTimestamp();
 
@@ -37,13 +37,22 @@ class ShopeeApiClient {
     url.searchParams.set("timestamp", timestamp);
     url.searchParams.set("partner_id", this._partnerId);
 
+    const reqBody = {
+      code,
+      partner_id: this._partnerId,
+    };
+
+    if (type === "shop_id") {
+      reqBody.shop_id = parseInt(sellerId);
+    } else if (type === "main_account_id") {
+      reqBody.main_account_id = parseInt(sellerId);
+    } else {
+      throw new Error(`Unsupported seller type: '${type}'`);
+    }
+
     return fetch(url.toString(), {
       method: "POST",
-      body: JSON.stringify({
-        code,
-        shop_id: parseInt(shopId),
-        partner_id: this._partnerId,
-      }),
+      body: JSON.stringify(reqBody),
     }).then((res) => res.json());
   }
 
