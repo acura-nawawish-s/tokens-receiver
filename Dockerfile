@@ -17,6 +17,8 @@ COPY . .
 # Stage 2: Runtime
 # Use a smaller base image for the runtime stage
 FROM node:20-alpine
+LABEL maintainer="Acuratech Development Team <dev@acuratechpattaya.com>"
+LABEL org.opencontainers.image.source https://github.com/acura-tech/tokens-receiver
 
 # Set the working directory in the container to /app
 WORKDIR /app
